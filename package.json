@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "debug": "node --inspect-brk $(which jest)",
+    "lint": "$(npm bin)/eslint . --fix",
     "test": "jest"
   },
   "keywords": [],
@@ -15,6 +17,8 @@
     "keccak": "^2.0.0"
   },
   "devDependencies": {
+    "eslint": "^6.4.0",
+    "eslint-plugin-jest": "^22.17.0",
     "jest": "^24.9.0"
   }
 }
