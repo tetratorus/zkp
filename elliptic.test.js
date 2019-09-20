@@ -94,3 +94,43 @@ test('Interactive proof that we know openings of m vectors', () => {
 
 })
 
+test('Inner product proof, z = xvec . yvec', () => {
+  let vectorLength = 3
+  let H0 = H(0)
+  let G0 = G(0)
+  let xvec = new Vector(Array.from(Array(vectorLength)).map(() => random(32)))
+  let yvec = new Vector(Array.from(Array(vectorLength)).map(() => random(32)))
+  let z = xvec.innerProduct(yvec)
+  let t = random(32) 
+  let r = random(32) 
+  let s = random(32) 
+  let Cz = H0.mul(t).add(G0.mul(z))
+  let Cx = H0.mul(r).add(xvec.innerProduct(Gvec(vectorLength)))
+  let Cy = H0.mul(s).add(yvec.innerProduct(Gvec(vectorLength)))
+
+  let dx  = new Vector(Array.from(Array(vectorLength)).map(() => random(32)))
+  let dy  = new Vector(Array.from(Array(vectorLength)).map(() => random(32)))
+  let rd = random(32)
+  let sd = random(32)
+  let Ad = H0.mul(rd).add(dx.innerProduct(Gvec(vectorLength)))
+  let Bd = H0.mul(sd).add(dy.innerProduct(Gvec(vectorLength)))
+  let t1 = random(32)
+  let t0 = random(32)
+  let C1 = H0.mul(t1).add(G0.mul(xvec.innerProduct(dy).add(yvec.innerProduct(dx))))
+  let C0 = H0.mul(t0).add(G0.mul(dx.innerProduct(dy)))
+
+  let e = random(32)
+
+  let add = (a,b) => a.add(b)
+  let fx = xvec.mul(e).ops(dx, add)
+  let fy = yvec.mul(e).ops(dy, add)
+  let rx = e.mul(r).add(rd)
+  let sy = e.mul(s).add(sd)
+  let tz = e.pow(new BN(2)).mul(t).add(e.mul(t1)).add(t0)
+
+  expect(ptsEql(Cx.mul(e).add(Ad), H0.mul(rx).add(fx.innerProduct(Gvec(vectorLength))))).toBe(true)
+  expect(ptsEql(Cy.mul(e).add(Bd), H0.mul(sy).add(fy.innerProduct(Gvec(vectorLength))))).toBe(true)
+  // console.log(fx.innerProduct(fy).umod(ec.curve.n))
+  // console.log(e.pow(new BN(2)).mul(z).add(e.mul(xvec.innerProduct(dy).add(yvec.innerProduct(dx)))).add(dx.innerProduct(dy)).umod(ec.curve.n))
+  expect(ptsEql(H0.mul(tz).add(G0.mul(fx.innerProduct(fy))), Cz.mul(e.pow(new BN(2))).add(C1.mul(e)).add(C0))).toBe(true)
+})

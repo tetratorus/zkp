@@ -55,9 +55,7 @@ const Hvec = function(n) {
 }
 
 const basePointGen = function(basePointSymbol) {
-  if (typeof basePointSybol !== 'string') {
-    throw new Error('basePointSymbol must be string')
-  }
+  if (typeof basePointSybol !== 'string') throw new Error('basePointSymbol must be string')
   const cache = {}
   const getB = function(num) {
     if (num === -1) {
@@ -103,28 +101,27 @@ function ptsEql(pt1, pt2) {
   return pt1.x.toString(16, 64) === pt2.x.toString(16, 64) && pt1.y.toString(16, 64) === pt2.y.toString(16, 64)
 }
 
+function ptsvecEql(ptvec1, ptvec2) {
+  if (ptvec1.values.length !== ptvec2.values.length) throw new Error('Vectors of different lengths')
+  let unequal = false
+  ptvec1.values.map((elem, index) => {
+    if (!ptsEql(ptvec2.values[index], elem)) unequal = true
+  })
+  return !unequal
+}
+
 function Vector(values) {
-  if (!Array.isArray(values)) {
-    throw new Error('Vector cannot be created without array of values')
-  }
+  if (!Array.isArray(values)) throw new Error('Vector cannot be created without array of values')
   this.values = values
 }
 
 Vector.prototype.constructor = Vector
 
 Vector.prototype.ops = function(vector, operation) {
-  if (!(vector instanceof Vector)) {
-    throw new Error('ops can only be between vectors')    
-  }
-  if (vector.values.length !== this.values.length) {
-    throw new Error('ops can only multiply two same length vectors')
-  }
-  if (typeof operation !== 'function') {
-    throw new Error('operation must be a function')
-  }
-  if (operation.length !== 2) {
-    throw new Error('operation must accept two arguments')
-  }
+  if (!(vector instanceof Vector)) throw new Error('ops can only be between vectors')
+  if (vector.values.length !== this.values.length) throw new Error('ops can only multiply two same length vectors')
+  if (typeof operation !== 'function') throw new Error('operation must be a function')
+  if (operation.length !== 2) throw new Error('operation must accept two arguments')
   const resVal = []
   for (let i = 0; i < this.values.length; i++) {
     resVal.push(operation(this.values[i], vector.values[i]))
@@ -133,12 +130,8 @@ Vector.prototype.ops = function(vector, operation) {
 }
 
 Vector.prototype.op = function(operation) {
-  if (typeof operation !== 'function') {
-    throw new Error('operation must be a function')
-  }
-  if (operation.length !== 1) {
-    throw new Error('operation must accept one argument')
-  }
+  if (typeof operation !== 'function') throw new Error('operation must be a function')
+  if (operation.length !== 1) throw new Error('operation must accept one argument')
   for (let i = 0; i < this.values.length; i++) {
     this.values[i] = operation(this.values[i])
   }
@@ -151,12 +144,8 @@ Vector.prototype.mul = function(num) {
 }
 
 Vector.prototype.innerProduct = function(vector) {
-  if (!(vector instanceof Vector)) {
-    throw new Error('innerProduct can only be between vectors')
-  }
-  if (vector.values.length !== this.values.length) {
-    throw new Error('innerProduct can only multiply two same length vectors')
-  }
+  if (!(vector instanceof Vector)) throw new Error('innerProduct can only be between vectors')
+  if (vector.values.length !== this.values.length) throw new Error('innerProduct can only multiply two same length vectors')
   var resVals = []
   const isPoint = val => typeof val === 'object' && val.x != undefined && val.y != undefined
   const isBN = val => BN.isBN(val)
@@ -192,9 +181,7 @@ Vector.prototype.innerProduct = function(vector) {
 }
 
 const genExpVec = function(e, m) {
-  if (!BN.isBN(e)) {
-    throw new Error('genExpVec expects BN')
-  }
+  if (!BN.isBN(e)) throw new Error('genExpVec expects BN')
   let es = []
   for (let i = 0; i <= m; i++) {
     es.push(e.pow(new BN(i)))
@@ -212,6 +199,7 @@ module.exports = {
   basePointGen,
   basePointvec,
   ptsEql,
+  ptsvecEql,
   random,
   Vector
 }
