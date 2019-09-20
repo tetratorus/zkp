@@ -132,15 +132,15 @@ Vector.prototype.ops = function(vector, operation) {
 Vector.prototype.op = function(operation) {
   if (typeof operation !== 'function') throw new Error('operation must be a function')
   if (operation.length !== 1) throw new Error('operation must accept one argument')
+  const resVal = []
   for (let i = 0; i < this.values.length; i++) {
-    this.values[i] = operation(this.values[i])
+    resVal.push(operation(this.values[i]))
   }
-  return this
+  return new Vector(resVal)
 }
 
 Vector.prototype.mul = function(num) {
-  this.op(val => val.mul(num))
-  return this
+  return this.op(val => val.mul(num))
 }
 
 Vector.prototype.innerProduct = function(vector) {
@@ -177,6 +177,8 @@ Vector.prototype.innerProduct = function(vector) {
         return acc.add(curr)
       }
     }, null)
+  } else {
+    throw new Error('Unexpected values in resVals')
   }
 }
 
