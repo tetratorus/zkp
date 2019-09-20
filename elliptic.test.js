@@ -200,3 +200,17 @@ test('Inner product proof, z = xvec . yvec', () => {
   expect(ptsEql(H0.mul(tz).add(G0.mul(fx.innerProduct(fy))), Cz.mul(e.pow(new BN(2))).add(C1.mul(e)).add(C0))).toBe(true)
 })
 
+test('Condensing a single vector', () => {
+  // A = a1G1 + a2G2 + ... + a10G10
+  // chop this up into sets of 2
+  // ie. [a1,a2,a3,a4,a5,a6,a7,a8,a9,10] => [[a1,a2],[a3,a4],[a5,a6],[a7,a8],[a9,10]]
+  // [G1,G2,G3,G4,G5,G6,G7,G8,G9,G10] => [[G1,G2],[G3,G4],[G5,G6],[G7,G8],[G9,G10]]
+  // this forms the matrix
+  // [avec1.Gvec1, avec2.Gvec1, ... avec5.Gvec1]
+  // [avec1.Gvec2, avec2.Gvec2, ... avec5.Gvec2]
+  // ...
+  // [avec1.Gvec5, avec2.Gvec5, ... avec5.Gvec5]
+  // note that the main diagonal is, in fact, the original A
+  // the prover will now send commitments to the \ diagonals of this matrix
+  // (including the main diagonal, which is A, there are 2x5-1=9 diagonal commitments)
+})
